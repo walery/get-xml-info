@@ -21,7 +21,18 @@ try {
       console.log('File was read successfully. Proceeding to parse DOM.');
 
       var doc = new dom().parseFromString(data);
-      var nodes = xpath.select(xpathToSearch, doc);
+
+      const ns = doc.documentElement.namespaceURI;
+      let nodes
+
+      if (ns) {
+        // TODO possible collision with existent namespace with name ns
+        // TODO make it possible to change default namespace name with input
+        const select = xpath.useNamespaces({ "ns": ns });
+        nodes = select(xpathToSearch, doc);
+      } else {
+        nodes = xpath.select(xpathToSearch, doc);
+      }
 
       console.log(`Found ${nodes.length} nodes.`);
 
